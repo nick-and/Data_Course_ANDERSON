@@ -1,2 +1,2 @@
 # Data_Course_ANDERSONThis README file contains information about my uploaded assignments
-This README file contains information about my uploaded assignments. Hello. This class is hard. This will be a fun semester.
+This README file contains information about my uploaded assignments. Computers are fun.
