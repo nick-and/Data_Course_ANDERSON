@@ -1,0 +1,9 @@
+"Final Project Idea"
+
+National Parks and types of customers who enter
+
+This project will be a data analysis of the 5 chosen national parks: Zion's, Grand Canyon, Arches, Bryce Canyon, and Capitol Reef.
+This project will analyze categories such as: Total entries per year, total entries per season, total entries per month,
+ average numbers of adults vs children vs seniors.
+Other categories will also include: Park size, average seasonal temperatures, and number of trails.
+
