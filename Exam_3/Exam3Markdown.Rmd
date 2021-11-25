@@ -1,0 +1,140 @@
+---
+title: "Exam3Finished"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##### Exam 3
+
+```{r, include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(modelr)
+library(easystats)
+library(broom)
+
+```
+##### Tidy the data and produce Fig.1
+```{r, warning=FALSE,include=FALSE}
+df <- read_csv("FacultySalaries_1995.csv")
+names(df)
+
+
+```
+
+
+```{r, warning=FALSE}
+ASalary <- df %>% 
+  select("FedID","UnivName","State","Tier",ends_with("y"),
+         "AvgProfSalaryAll") %>% 
+  pivot_longer(cols = ends_with("y"),
+               names_to = "Rank",
+               values_to = "Salary",
+               names_prefix = "Avg")
+
+AVGSalary <- filter(ASalary, !Tier %in% c("VIIB"))
+
+glimpse(AVGSalary)
+
+
+
+x_axis <- c("Assist","Assoc","Full")
+AVGSalary %>% 
+  ggplot(aes(x=Rank,y=Salary,fill=Rank))+
+  geom_boxplot()+
+  theme_minimal()+
+  scale_x_discrete(labels=x_axis)+
+  scale_fill_discrete(labels=x_axis)+
+  theme(axis.text.x = element_text(angle = 60))+
+  facet_grid(~Tier)
+```
+
+
+
+
+
+#### Produce AVOVA Table called Salary_ANOVA_Summary
+
+
+```{r}
+mod <- glm(data = AVGSalary,
+           formula = Salary ~ Tier + State + Rank)
+amod <- anova(mod)
+anova(mod)
+write.table(amod,file = "Salary_ANOVA_Summary.txt")
+
+```
+
+
+#### Tidy the Juniper Oils dataset and pivot new columns: Chemical ID and Concentration.
+
+
+```{r,include=FALSE}
+jdf <- read_csv("Juniper_Oils.csv")
+
+
+
+```
+
+
+```{r}
+tidy_jdf <- jdf %>% 
+  pivot_longer(cols = all_of(c("alpha-pinene","para-cymene","alpha-terpineol","cedr-9-ene","alpha-cedrene","beta-cedrene","cis-thujopsene","alpha-himachalene","beta-chamigrene","cuparene","compound 1","alpha-chamigrene","widdrol","cedrol","beta-acorenol","alpha-acorenol","gamma-eudesmol","beta-eudesmol","alpha-eudesmol","cedr-8-en-13-ol","cedr-8-en-15-ol","compound 2","thujopsenal")),
+               names_to = "ChemicalID",
+               values_to = "Concentration")
+
+glimpse(tidy_jdf)
+```
+
+
+#### Produce the graph from Fig.2
+
+```{r}
+tidy_jdf %>% 
+  ggplot(aes(x=YearsSinceBurn,y=Concentration))+
+  geom_smooth()+
+  theme_minimal()+
+  facet_wrap(~ChemicalID,scales = "free")
+```
+
+#### Use a generalized linear model to find which chemicals show concentrations that are significantly (significant, as in P < 0.05) affected by "Years Since Burn".
+
+```{r}
+
+jmod <- glm(data = tidy_jdf,
+            formula = Concentration~YearsSinceBurn*ChemicalID)
+
+tidy(jmod)
+tjmod <- tidy(jmod)
+
+
+tjmod %>% 
+  filter(p.value < 0.05) %>% 
+  mutate(term=str_remove_all(term,"ChemicalID"))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
