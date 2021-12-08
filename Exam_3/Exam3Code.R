@@ -78,13 +78,16 @@ tidy_jdf %>%
 jmod <- glm(data = tidy_jdf,
             formula = Concentration~YearsSinceBurn*ChemicalID)
 
-summary(jmod)
-
-add_predictions(tidy_jdf,jmod,type = "response")
 
 anova(jmod)
 
-tidy(jmod)
+tjmod <- tidy(jmod)
+
+
+tjmod %>% 
+  filter(p.value < 0.05) %>% 
+  mutate(term=str_remove_all(term,"ChemicalID"))
+
 
 ?pivot_longer
 ?cols
